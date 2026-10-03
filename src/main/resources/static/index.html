@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tournament Setup</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[#0c0f17] text-slate-100 min-h-screen">
+<div class="max-w-7xl mx-auto px-4 py-8">
+    <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-6 mb-8 border-b border-slate-800 gap-4">
+        <div>
+            <span class="text-xs font-mono font-semibold tracking-wider text-emerald-400 uppercase bg-emerald-950/50 px-2.5 py-1 rounded border border-emerald-800/50">Chess Swiss System</span>
+            <h1 class="text-2xl font-bold text-white mt-1 tracking-tight">Tournament Setup Center</h1>
+        </div>
+        <div id="backend-sync-status" class="text-xs font-mono bg-blue-950 text-blue-300 px-2.5 py-1.5 rounded border border-blue-800/50">API: Standby</div>
+    </header>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div class="lg:col-span-1 space-y-6">
+            <div class="bg-slate-900 border border-slate-800 rounded-lg p-5">
+                <h2 class="text-sm font-semibold text-slate-300 uppercase tracking-wider mb-4">1. Configuration</h2>
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-2">Total Rounds</label>
+                    <input type="number" id="rounds-count" value="3" min="1" max="15" class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-sm text-white focus:border-emerald-500 focus:outline-none font-mono">
+                </div>
+            </div>
+
+            <div class="bg-slate-900 border border-slate-800 rounded-lg p-5">
+                <h2 class="text-sm font-semibold text-slate-300 uppercase tracking-wider mb-4">2. Add Participant</h2>
+                <div class="space-y-3">
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Quick Load</label>
+                        <div class="flex gap-2">
+                            <input type="number" id="fetch-id" placeholder="ID" class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-1.5 text-sm text-white font-mono">
+                            <button onclick="fetchPlayerById()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded text-xs font-medium border border-slate-700 transition">Fetch</button>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Player Name</label>
+                        <input type="text" id="player-name" placeholder="Full Name" class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-1.5 text-sm text-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Rating</label>
+                        <input type="number" id="player-rating" value="1500" class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-1.5 text-sm text-white font-mono">
+                    </div>
+                    <button onclick="addPlayer()" class="w-full bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-slate-700 font-medium py-2 rounded text-xs tracking-wide uppercase transition">Add Player</button>
+                </div>
+            </div>
+
+            <button onclick="initializeTournament()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-3 rounded text-sm transition tracking-wide uppercase">
+                Initialize Tournament
+            </button>
+        </div>
+
+        <div class="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-lg p-5 flex flex-col justify-between">
+            <div>
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-sm font-semibold text-slate-300 uppercase tracking-wider">Registered Roster</h2>
+                    <span id="roster-count" class="text-xs font-mono text-slate-500">0 players</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs font-mono">
+                        <thead>
+                        <tr class="border-b border-slate-800 text-slate-500 uppercase">
+                            <th class="py-2.5 px-3">#</th>
+                            <th class="py-2.5 px-3">Name</th>
+                            <th class="py-2.5 px-3">Rating</th>
+                            <th class="py-2.5 px-3 text-right">Action</th>
+                        </tr>
+                        </thead>
+                        <tbody id="player-list-body" class="divide-y divide-slate-800/60 text-slate-300"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="module" src="app.js"></script>
+</body>
+</html>
+<!--<!DOCTYPE html>-->
+<!--<html lang="en">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+<!--    <title>Swiss Chess Manager</title>-->
+<!--    <script src="https://cdn.tailwindcss.com"></script>-->
+<!--    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">-->
+<!--    <style>-->
+<!--        body { font-family: 'Plus Jakarta Sans', sans-serif; }-->
+<!--        .font-mono { font-family: 'IBM Plex Mono', monospace; }-->
+<!--    </style>-->
+<!--</head>-->
+<!--<body class="bg-[#0c0f17] text-slate-100 min-h-screen">-->
+
+<!--    <div class="max-w-7xl mx-auto px-4 py-8">-->
+<!--        &lt;!&ndash; Minimalist Header &ndash;&gt;-->
+<!--        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-6 mb-8 border-b border-slate-800 gap-4">-->
+<!--            <div>-->
+<!--                <span class="text-xs font-mono font-semibold tracking-wider text-emerald-400 uppercase bg-emerald-950/50 px-2.5 py-1 rounded border border-emerald-800/50">Chess Swiss System</span>-->
+<!--                <h1 class="text-2xl font-bold text-white mt-1 tracking-tight">Tournament Control Center</h1>-->
+<!--            </div>-->
+<!--            <div class="flex items-center gap-3">-->
+<!--                <span id="backend-sync-status" class="text-xs font-mono bg-blue-950 text-blue-300 px-2.5 py-1.5 rounded border border-blue-800/50">API: Standby</span>-->
+<!--                <div id="global-status-badge" class="hidden text-xs font-mono bg-slate-800 text-slate-300 px-3 py-1.5 rounded border border-slate-700">-->
+<!--                    Status: Setup Mode-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </header>-->
+
+<!--        &lt;!&ndash; SETUP SCREEN &ndash;&gt;-->
+<!--        <div id="setup-screen" class="grid grid-cols-1 lg:grid-cols-3 gap-8">-->
+<!--            <div class="lg:col-span-1 space-y-6">-->
+<!--                <div class="bg-slate-900 border border-slate-800 rounded-lg p-5">-->
+<!--                    <h2 class="text-sm font-semibold text-slate-300 uppercase tracking-wider mb-4">1. Configuration</h2>-->
+<!--                    <div>-->
+<!--                        <label class="block text-xs font-medium text-slate-400 mb-2">Total Rounds</label>-->
+<!--                        <input type="number" id="rounds-count" value="0" min="1" max="15" class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-sm text-white focus:border-emerald-500 focus:outline-none font-mono">-->
+<!--                    </div>-->
+<!--                </div>-->
+
+<!--                <div class="bg-slate-900 border border-slate-800 rounded-lg p-5">-->
+<!--                    <h2 class="text-sm font-semibold text-slate-300 uppercase tracking-wider mb-4">2. Add Participant</h2>-->
+<!--                    <div class="space-y-3">-->
+<!--                        <div>-->
+<!--                            <label class="block text-xs text-slate-400 mb-1">Quick Load</label>-->
+<!--                            <div class="flex gap-2">-->
+<!--                                <input type="number" id="fetch-id" placeholder="ID" class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-1.5 text-sm text-white font-mono">-->
+<!--                                <button onclick="fetchPlayerFromBackend()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded text-xs font-medium border border-slate-700 transition">Fetch</button>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <div>-->
+<!--                            <label class="block text-xs text-slate-400 mb-1">Player Name</label>-->
+<!--                            <input type="text" id="player-name" placeholder="Full Name" class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-1.5 text-sm text-white">-->
+<!--                        </div>-->
+<!--                        <div>-->
+<!--                            <label class="block text-xs text-slate-400 mb-1">Rating</label>-->
+<!--                            <input type="number" id="player-rating" value="1500" class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-1.5 text-sm text-white font-mono">-->
+<!--                        </div>-->
+<!--                        <button onclick="addPlayer()" class="w-full bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-slate-700 font-medium py-2 rounded text-xs tracking-wide uppercase transition">Add Player</button>-->
+<!--                    </div>-->
+<!--                </div>-->
+
+<!--                <button onclick="initializeTournamentAPI()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-3 rounded text-sm transition tracking-wide uppercase">-->
+<!--                    Initialize Tournament-->
+<!--                </button>-->
+<!--            </div>-->
+
+<!--            <div class="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-lg p-5 flex flex-col justify-between">-->
+<!--                <div>-->
+<!--                    <div class="flex justify-between items-center mb-4">-->
+<!--                        <h2 class="text-sm font-semibold text-slate-300 uppercase tracking-wider">Registered Roster</h2>-->
+<!--                        <span id="roster-count" class="text-xs font-mono text-slate-500">0 players</span>-->
+<!--                    </div>-->
+<!--                    <div class="overflow-x-auto">-->
+<!--                        <table class="w-full text-left text-xs font-mono">-->
+<!--                            <thead>-->
+<!--                                <tr class="border-b border-slate-800 text-slate-500 uppercase">-->
+<!--                                    <th class="py-2.5 px-3">#</th>-->
+<!--                                    <th class="py-2.5 px-3">Name</th>-->
+<!--                                    <th class="py-2.5 px-3">Rating</th>-->
+<!--                                    <th class="py-2.5 px-3 text-right">Action</th>-->
+<!--                                </tr>-->
+<!--                            </thead>-->
+<!--                            <tbody id="player-list-body" class="divide-y divide-slate-800/60 text-slate-300"></tbody>-->
+<!--                        </table>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+
+<!--        &lt;!&ndash; DASHBOARD SCREEN &ndash;&gt;-->
+<!--        <div id="dashboard-screen" class="hidden space-y-6">-->
+<!--            <div class="bg-slate-900 border border-slate-800 rounded-lg p-4 flex flex-wrap justify-between items-center gap-4">-->
+<!--                <div class="flex items-center gap-3">-->
+<!--                    <span id="current-round-indicator" class="text-xs font-mono font-bold px-2.5 py-1 bg-emerald-950 text-emerald-400 rounded border border-emerald-800/60">Round 1</span>-->
+<!--                    <h2 id="dashboard-title" class="font-semibold text-sm text-slate-200">Active Pairings</h2>-->
+<!--                </div>-->
+<!--                <div class="flex items-center gap-2">-->
+<!--                    <div id="round-tabs-container" class="flex gap-1 bg-slate-950 p-1 rounded border border-slate-800 text-xs font-mono"></div>-->
+<!--                    <button id="next-round-btn" onclick="nextRoundAPI()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded text-xs font-semibold uppercase tracking-wider transition">-->
+<!--                        Confirm Results & Next Round (API)-->
+<!--                    </button>-->
+<!--                    <button onclick="resetTournament()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-2 rounded text-xs transition border border-slate-700">-->
+<!--                        Reset-->
+<!--                    </button>-->
+<!--                </div>-->
+<!--            </div>-->
+
+<!--            <div class="grid grid-cols-1 xl:grid-cols-12 gap-6">-->
+<!--                <div class="xl:col-span-6 bg-slate-900 border border-slate-800 rounded-lg p-5">-->
+<!--                    <div class="flex justify-between items-center mb-4">-->
+<!--                        <h3 id="pairings-header-title" class="text-xs font-semibold uppercase tracking-wider text-slate-400">Current Board Pairings & Order</h3>-->
+<!--                        <span class="text-[10px] font-mono text-slate-500">White (Left) vs Black (Right)</span>-->
+<!--                    </div>-->
+<!--                    <div id="matches-container" class="space-y-3"></div>-->
+<!--                </div>-->
+
+<!--                <div class="xl:col-span-6 bg-slate-900 border border-slate-800 rounded-lg p-5">-->
+<!--                    <div class="flex justify-between items-center mb-4">-->
+<!--                        <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-400">Standings & Tiebreaks (BH, SB, AR)</h3>-->
+<!--                        <span class="text-[10px] font-mono text-slate-500">Click name for player profile & API lookup</span>-->
+<!--                    </div>-->
+<!--                    <div class="overflow-x-auto">-->
+<!--                        <table class="w-full text-left text-xs font-mono">-->
+<!--                            <thead>-->
+<!--                                <tr class="border-b border-slate-800 text-slate-500 uppercase text-[10px]">-->
+<!--                                    <th class="py-2 px-2">Rk</th>-->
+<!--                                    <th class="py-2 px-2">Name</th>-->
+<!--                                    <th class="py-2 px-2 text-center">Pts</th>-->
+<!--                                    <th class="py-2 px-2 text-center">BH</th>-->
+<!--                                    <th class="py-2 px-2 text-center">SB</th>-->
+<!--                                    <th class="py-2 px-2 text-center">AR</th>-->
+<!--                                    <th class="py-2 px-2 text-right">RTG</th>-->
+<!--                                </tr>-->
+<!--                            </thead>-->
+<!--                            <tbody id="standings-body" class="divide-y divide-slate-800/60 text-slate-300"></tbody>-->
+<!--                        </table>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+
+<!--        <div id="winners-section" class="hidden bg-slate-900 border border-emerald-800/50 rounded-lg p-6 mt-6">-->
+<!--            <h2 class="text-sm font-semibold uppercase tracking-wider text-emerald-400 mb-4">Final Tournament Standings</h2>-->
+<!--            <div id="podium-list" class="space-y-2 font-mono text-xs"></div>-->
+<!--        </div>-->
+<!--    </div>-->
+
+<!--    &lt;!&ndash; PLAYER PROFILE MODAL WITH GET PLAYER BY ID INTEGRATION &ndash;&gt;-->
+<!--    <div id="player-modal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-50">-->
+<!--        <div class="bg-slate-900 border border-slate-800 rounded-lg max-w-lg w-full p-6 space-y-5 text-slate-200">-->
+<!--            <div class="flex justify-between items-start border-b border-slate-800 pb-4">-->
+<!--                <div>-->
+<!--                    <span id="modal-player-rank" class="text-xs font-mono bg-emerald-950 text-emerald-400 px-2 py-0.5 rounded border border-emerald-800/50">Player ID</span>-->
+<!--                    <h3 id="modal-player-name" class="text-lg font-bold text-white mt-1">Player Name</h3>-->
+<!--                </div>-->
+<!--                <button onclick="closePlayerModal()" class="text-slate-400 hover:text-white font-mono text-sm px-2 py-1 bg-slate-800 rounded border border-slate-700">✕ Close</button>-->
+<!--            </div>-->
+<!--            <div class="grid grid-cols-2 gap-3 font-mono text-xs">-->
+<!--                <div class="bg-slate-950 p-3 rounded border border-slate-800">-->
+<!--                    <span class="text-slate-500 block">Rating</span>-->
+<!--                    <span id="modal-player-rating" class="font-bold text-white text-sm">1500</span>-->
+<!--                </div>-->
+<!--                <div class="bg-slate-950 p-3 rounded border border-slate-800">-->
+<!--                    <span class="text-slate-500 block">Score</span>-->
+<!--                    <span id="modal-player-score" class="font-bold text-emerald-400 text-sm">0.0</span>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div>-->
+<!--                <h4 class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2 font-mono">Match History</h4>-->
+<!--                <div id="modal-match-history" class="space-y-2 max-h-48 overflow-y-auto font-mono text-xs"></div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--    <script type="module" src="app.js"></script>-->
+<!--    <script>-->
+<!--        let players = [];-->
+<!--     let roundsCount = 0;-->
+<!--     let currentRound = 0;-->
+<!--     let roundsHistory = [];-->
+<!--     let viewingRound = 0;-->
+<!--     let tournamentCompleted = false;-->
+<!--     let tournamentId = null;-->
+
+<!--     // API Base URL Configuration-->
+<!--     const API_BASE = '/home';-->
+
+<!--     async function fetchPlayerFromBackend() {-->
+<!--         const id = document.getElementById('fetch-id').value.trim();-->
+<!--         if (!id) {-->
+<!--             alert("Please enter a player ID");-->
+<!--             return;-->
+<!--         }-->
+
+<!--         setApiStatus("Fetching Player...", "amber");-->
+
+<!--         try {-->
+<!--             const response = await fetch(`${API_BASE}/player/${id}`);-->
+<!--             if (response.ok) {-->
+<!--                 const player = await response.json();-->
+<!--                 if (player && player.name) {-->
+<!--                     document.getElementById('player-name').value = player.name;-->
+<!--                     document.getElementById('player-rating').value = player.rating || 1500;-->
+<!--                     setApiStatus("Player Fetched ✓", "emerald");-->
+<!--                 } else {-->
+<!--                     alert("Player data format invalid or empty");-->
+<!--                     setApiStatus("Player Not Found", "rose");-->
+<!--                 }-->
+<!--             } else {-->
+<!--                 alert(`Player with ID ${id} not found on backend (Status: ${response.status})`);-->
+<!--                 setApiStatus("Player Not Found", "rose");-->
+<!--             }-->
+<!--         } catch (e) {-->
+<!--             setApiStatus("Player Not Found", "rose");-->
+<!--             alert(`Error communicating with backend for player ID: ${id}`);-->
+<!--         }-->
+<!--     }-->
+
+<!--     function addPlayer() {-->
+<!--         const nameInput = document.getElementById('player-name');-->
+<!--         const ratingInput = document.getElementById('player-rating');-->
+<!--         if (!nameInput.value.trim()) return;-->
+
+<!--         players.push({-->
+<!--             id: null,-->
+<!--             name: nameInput.value.trim(),-->
+<!--             rating: parseInt(ratingInput.value) || 1500,-->
+<!--             score: 0,-->
+<!--             byeReceived: false,-->
+<!--             opponents: {}-->
+<!--         });-->
+
+<!--         nameInput.value = '';-->
+<!--         renderPlayerList();-->
+<!--     }-->
+
+<!--     function renderPlayerList() {-->
+<!--         const tbody = document.getElementById('player-list-body');-->
+<!--         tbody.innerHTML = '';-->
+<!--         players.forEach((p, idx) => {-->
+<!--             tbody.innerHTML += `-->
+<!--                 <tr class="hover:bg-slate-800/40">-->
+<!--                     <td class="py-2 px-3 text-slate-500">${idx + 1}</td>-->
+<!--                     <td class="py-2 px-3 font-semibold text-slate-200">${p.name}</td>-->
+<!--                     <td class="py-2 px-3">${p.rating}</td>-->
+<!--                     <td class="py-2 px-3 text-right">-->
+<!--                         <button onclick="removePlayer(${idx})" class="text-rose-400 hover:text-rose-300">Del</button>-->
+<!--                     </td>-->
+<!--                 </tr>-->
+<!--             `;-->
+<!--         });-->
+<!--         document.getElementById('roster-count').innerText = `${players.length} players`;-->
+<!--     }-->
+
+<!--     function removePlayer(index) {-->
+<!--         players.splice(index, 1);-->
+<!--         renderPlayerList();-->
+<!--     }-->
+
+<!--     // Endpoint 2: Initialize tournament via API-->
+<!--     // Endpoint 2: Initialize tournament via API-->
+<!--async function initializeTournamentAPI() {-->
+<!--    if (players.length < 2) {-->
+<!--        alert("At least 2 players required.");-->
+<!--        return;-->
+<!--    }-->
+
+<!--    roundsCount = parseInt(document.getElementById('rounds-count').value);-->
+<!--    if (roundsCount < 1) {-->
+<!--        alert("Choose rounds count");-->
+<!--        return;-->
+<!--    }-->
+<!--    currentRound = 1;-->
+<!--    viewingRound = 1;-->
+<!--    roundsHistory = [];-->
+<!--    tournamentCompleted = false;-->
+
+<!--    players.forEach(p => {-->
+<!--        p.score = 0;-->
+<!--        p.byeReceived = false;-->
+<!--        p.opponents = {};-->
+<!--    });-->
+
+<!--    // Clean players array so existing database IDs are preserved,-->
+<!--    // and new/manual players send null instead of undefined/empty values.-->
+<!--    const cleanedPlayers = players.map(p => ({-->
+<!--        id: (p.id !== null && p.id !== undefined && p.id !== 0) ? p.id : null,-->
+<!--        name: p.name,-->
+<!--        rating: p.rating || 1500,-->
+<!--        score: p.score || 0,-->
+<!--        byeReceived: p.byeReceived || false,-->
+<!--        opponents: {}-->
+<!--    }));-->
+
+<!--    const payload = {-->
+<!--        id: tournamentId !== null ? tournamentId : null,-->
+<!--        roundsCount: roundsCount,-->
+<!--        rounds: roundsHistory,-->
+<!--        players: cleanedPlayers-->
+<!--    };-->
+
+<!--    setApiStatus("Sending Init...", "amber");-->
+
+<!--    try {-->
+<!--        const response = await fetch(`${API_BASE}/initial`, {-->
+<!--            method: 'POST',-->
+<!--            headers: { 'Content-Type': 'application/json' },-->
+<!--            body: JSON.stringify(payload)-->
+<!--        });-->
+
+<!--        if (!response.ok) {-->
+<!--            const errorText = await response.text();-->
+<!--            console.error(`Backend error response (${response.status}):`, errorText);-->
+<!--            throw new Error(`Server returned status ${response.status}`);-->
+<!--        }-->
+
+<!--        const savedTournament = await response.json();-->
+
+<!--        if (savedTournament) {-->
+<!--            tournamentId = savedTournament.id !== undefined ? savedTournament.id : tournamentId;-->
+<!--            if (savedTournament.rounds) {-->
+<!--                roundsHistory = savedTournament.rounds;-->
+<!--            }-->
+<!--            if (savedTournament.players) {-->
+<!--                savedTournament.players.forEach(savedP => {-->
+<!--                    const localP = players.find(p => p.name === savedP.name);-->
+<!--                    if (localP) localP.id = savedP.id;-->
+<!--                });-->
+<!--            }-->
+<!--        }-->
+
+<!--        setApiStatus("Init Success ✓", "emerald");-->
+
+<!--        document.getElementById('setup-screen').classList.add('hidden');-->
+<!--        document.getElementById('dashboard-screen').classList.remove('hidden');-->
+<!--        document.getElementById('global-status-badge').classList.remove('hidden');-->
+<!--        document.getElementById('global-status-badge').innerText = `Status: In Progress`;-->
+
+<!--        updateUI();-->
+<!--    } catch (e) {-->
+<!--        console.error("Error during initialization API call:", e);-->
+<!--        setApiStatus("Init Failed ✗", "rose");-->
+<!--        alert("Failed to initialize tournament with the backend API. Check connection.");-->
+<!--    }-->
+<!--}-->
+
+<!--     // Endpoint 3: Create next round via API-->
+<!--     // Endpoint 3: Create next round via API-->
+<!--     async function nextRoundAPI() {-->
+<!--         const rObj = roundsHistory.find(r => r.round === currentRound);-->
+
+<!--         // Only check for null results on matches that have a player2 (skip BYEs)-->
+<!--         if (rObj && rObj.matches.some(m => m.player2 !== null && (m.winPlayer1 === null || m.winPlayer1 === undefined))) {-->
+<!--             alert("Please set a result for all boards before advancing.");-->
+<!--             return;-->
+<!--         }-->
+
+<!--         recalculateAllScores();-->
+
+<!--         if (currentRound < roundsCount) {-->
+<!--             currentRound++;-->
+<!--             viewingRound = currentRound;-->
+
+<!--             // 1. Clean rounds and make sure player IDs are preserved (with fallback lookup)-->
+<!--             const cleanedRounds = roundsHistory.map(r => ({-->
+<!--                 id: r.id || null,-->
+<!--                 round: r.round,-->
+<!--                 matches: r.matches.map(m => ({-->
+<!--                     id: m.id || null,-->
+<!--                     round: r.round,-->
+<!--                     player1: m.player1 ? {-->
+<!--                         id: m.player1.id || players.find(p => p.name === m.player1.name)?.id || null,-->
+<!--                         name: m.player1.name,-->
+<!--                         rating: m.player1.rating || 1500,-->
+<!--                         score: m.player1.score || 0,-->
+<!--                         byeReceived: m.player1.byeReceived || false,-->
+<!--                         opponents: {}-->
+<!--                     } : null,-->
+<!--                     player2: m.player2 ? {-->
+<!--                         id: m.player2.id || players.find(p => p.name === m.player2.name)?.id || null,-->
+<!--                         name: m.player2.name,-->
+<!--                         rating: m.player2.rating || 1500,-->
+<!--                         score: m.player2.score || 0,-->
+<!--                         byeReceived: m.player2.byeReceived || false,-->
+<!--                         opponents: {}-->
+<!--                     } : null,-->
+<!--                     winPlayer1: m.winPlayer1 === 'draw' ? null : m.winPlayer1,-->
+<!--                     colorPlayer1: m.colorPlayer1 !== undefined ? m.colorPlayer1 : true,-->
+<!--                     tournmentDto: null-->
+<!--                 }))-->
+<!--             }));-->
+
+<!--             // 2. Clean players array to strip circular opponent references-->
+<!--             const cleanedPlayers = players.map(p => ({-->
+<!--                 id: p.id || null,-->
+<!--                 name: p.name,-->
+<!--                 rating: p.rating || 1500,-->
+<!--                 score: p.score || 0,-->
+<!--                 byeReceived: p.byeReceived || false,-->
+<!--                 opponents: {}-->
+<!--             }));-->
+
+<!--             const payload = {-->
+<!--                 id: tournamentId,-->
+<!--                 roundsCount: roundsCount,-->
+<!--                 rounds: cleanedRounds,-->
+<!--                 players: cleanedPlayers-->
+<!--             };-->
+
+<!--             setApiStatus("Sending Next Round...", "amber");-->
+
+<!--             try {-->
+<!--                 const response = await fetch(`${API_BASE}/next`, {-->
+<!--                     method: 'POST',-->
+<!--                     headers: { 'Content-Type': 'application/json' },-->
+<!--                     body: JSON.stringify(payload)-->
+<!--                 });-->
+
+<!--                 if (!response.ok) {-->
+<!--                     const errorText = await response.text();-->
+<!--                     console.error(`Backend error response (${response.status}):`, errorText);-->
+<!--                     throw new Error(`Server returned status ${response.status}`);-->
+<!--                 }-->
+
+<!--                 const savedTournament = await response.json();-->
+
+<!--                 if (savedTournament && savedTournament.rounds) {-->
+<!--                     roundsHistory = savedTournament.rounds;-->
+<!--                 }-->
+<!--                 if (savedTournament && savedTournament.players) {-->
+<!--                     savedTournament.players.forEach(savedP => {-->
+<!--                         const localP = players.find(p => p.name === savedP.name);-->
+<!--                         if (localP) localP.id = savedP.id;-->
+<!--                     });-->
+<!--                 }-->
+
+<!--                 setApiStatus("Next Round Synced ✓", "emerald");-->
+<!--                 updateUI();-->
+<!--             } catch (e) {-->
+<!--                 console.error("Error during next round API call:", e);-->
+<!--                 setApiStatus("Next Round Failed ✗", "rose");-->
+<!--                 alert("Failed to sync next round with the backend API. Check your browser console.");-->
+<!--             }-->
+<!--         } else {-->
+<!--             tournamentCompleted = true;-->
+<!--             document.getElementById('next-round-btn').style.display = 'none';-->
+<!--             document.getElementById('global-status-badge').innerText = "Status: Completed";-->
+<!--             updateUI();-->
+<!--             showWinners();-->
+<!--         }-->
+<!--     }-->
+<!--     // Endpoint 1: Get player match data-->
+<!--     async function fetchPlayerMatchDataAPI(playerId, matchId) {-->
+<!--         const container = document.getElementById('modal-endpoint-data');-->
+<!--         container.innerText = `Fetching: GET ${API_BASE}/tournament/${tournamentId}/player/${playerId}...`;-->
+
+<!--         try {-->
+<!--             const response = await fetch(`${API_BASE}/tournament/${tournamentId}/player/${playerId}`);-->
+<!--             if (response.ok) {-->
+<!--                 const data = await response.json();-->
+<!--                 container.innerText = "GET Player Match Response:\n" + JSON.stringify(data, null, 2);-->
+<!--             } else {-->
+<!--                 throw new Error(`GET status ${response.status}`);-->
+<!--             }-->
+<!--         } catch (e) {-->
+<!--             container.innerText = "Error fetching player match data from API.";-->
+<!--         }-->
+<!--     }-->
+
+<!--     async function fetchPlayerByIdAPI(playerId) {-->
+<!--         if (!playerId) return;-->
+<!--         const container = document.getElementById('modal-endpoint-data');-->
+<!--         try {-->
+<!--             const response = await fetch(`${API_BASE}/player/${playerId}`);-->
+<!--             if (response.ok) {-->
+<!--                 const data = await response.json();-->
+<!--                 container.innerText = "GET Player Info Response:\n" + JSON.stringify(data, null, 2);-->
+<!--             } else {-->
+<!--                 throw new Error(`Status ${response.status}`);-->
+<!--             }-->
+<!--         } catch (e) {}-->
+<!--     }-->
+
+<!--     function setApiStatus(text, color) {-->
+<!--         const badge = document.getElementById('backend-sync-status');-->
+<!--         badge.innerText = `API: ${text}`;-->
+<!--         if (color === 'emerald') badge.className = "text-xs font-mono bg-emerald-950 text-emerald-300 px-2.5 py-1.5 rounded border border-emerald-800/50";-->
+<!--         if (color === 'amber') badge.className = "text-xs font-mono bg-amber-950 text-amber-300 px-2.5 py-1.5 rounded border border-amber-800/50";-->
+<!--         if (color === 'rose') badge.className = "text-xs font-mono bg-rose-950 text-rose-300 px-2.5 py-1.5 rounded border border-rose-800/50";-->
+<!--     }-->
+
+<!--     function calculateBuchholz(player) {-->
+<!--         let bh = 0;-->
+<!--         if (!player.opponents) return bh;-->
+<!--         Object.values(player.opponents).forEach(op => {-->
+<!--             if (op.playerDto) bh += op.playerDto.score;-->
+<!--         });-->
+<!--         return bh;-->
+<!--     }-->
+
+<!--     function calculateSonnebornBerger(player) {-->
+<!--         let sb = 0;-->
+<!--         if (!player.opponents) return sb;-->
+<!--         Object.values(player.opponents).forEach(op => {-->
+<!--             if (op.playerDto && op.win) sb += op.playerDto.score;-->
+<!--         });-->
+<!--         return sb;-->
+<!--     }-->
+
+<!--     function calculateAverageRating(player) {-->
+<!--         if (!player.opponents || Object.keys(player.opponents).length === 0) return 0;-->
+<!--         let sum = 0, count = 0;-->
+<!--         Object.values(player.opponents).forEach(op => {-->
+<!--             if (op.playerDto && op.playerDto.rating) {-->
+<!--                 sum += op.playerDto.rating;-->
+<!--                 count++;-->
+<!--             }-->
+<!--         });-->
+<!--         return count > 0 ? Math.round(sum / count) : 0;-->
+<!--     }-->
+
+<!--     function getSortedStandings() {-->
+<!--         return [...players].sort((a, b) => {-->
+<!--             if (b.score !== a.score) {-->
+<!--                 return b.score - a.score;-->
+<!--             }-->
+<!--             let bhA = calculateBuchholz(a);-->
+<!--             let bhB = calculateBuchholz(b);-->
+<!--             if (bhB !== bhA) {-->
+<!--                 return bhB - bhA;-->
+<!--             }-->
+<!--             return b.rating - a.rating;-->
+<!--         });-->
+<!--     }-->
+
+<!--     function setMatchResult(rNum, boardIdx, outcome) {-->
+<!--         const rObj = roundsHistory.find(r => r.round === rNum);-->
+<!--         if (rObj && rObj.matches[boardIdx]) {-->
+<!--             rObj.matches[boardIdx].winPlayer1 = outcome;-->
+<!--             updateUI();-->
+<!--         }-->
+<!--     }-->
+
+<!--     function recalculateAllScores() {-->
+<!--    players.forEach(p => {-->
+<!--        p.score = 0;-->
+<!--        p.byeReceived = false; // Reset bye status-->
+<!--        p.opponents = {};-->
+<!--    });-->
+
+<!--        roundsHistory.forEach(r => {-->
+<!--            r.matches.forEach(m => {-->
+<!--                // 1. Handle BYE automatically (no result buttons needed)-->
+<!--                if (!m.player2) {-->
+<!--                    const p1 = players.find(x => x.name === m.player1.name);-->
+<!--                    if (p1) {-->
+<!--                        p1.score += 1;-->
+<!--                        p1.byeReceived = true;-->
+<!--                    }-->
+<!--                }-->
+<!--                // 2. Handle regular matches only if a result has been set-->
+<!--                else if (m.winPlayer1 !== null && m.winPlayer1 !== undefined) {-->
+<!--                    const p1 = players.find(x => x.name === m.player1.name);-->
+<!--                    const p2 = players.find(x => x.name === m.player2.name);-->
+
+<!--                    if (p1 && p2) {-->
+<!--                        if (m.winPlayer1 === true) {-->
+<!--                            p1.score += 1;-->
+<!--                            p1.opponents[p2.name] = { playerDto: p2, color: true, win: true };-->
+<!--                            p2.opponents[p1.name] = { playerDto: p1, color: false, win: false };-->
+<!--                        } else if (m.winPlayer1 === false) {-->
+<!--                            p2.score += 1;-->
+<!--                            p1.opponents[p2.name] = { playerDto: p2, color: true, win: false };-->
+<!--                            p2.opponents[p1.name] = { playerDto: p1, color: false, win: true };-->
+<!--                        } else { // draw ('draw')-->
+<!--                            p1.score += 0.5;-->
+<!--                            p2.score += 0.5;-->
+<!--                            p1.opponents[p2.name] = { playerDto: p2, color: true, win: false };-->
+<!--                            p2.opponents[p1.name] = { playerDto: p1, color: false, win: false };-->
+<!--                        }-->
+<!--                    }-->
+<!--                }-->
+<!--            });-->
+<!--        });-->
+<!--    }-->
+
+<!--     function setViewingRound(rNum) {-->
+<!--         viewingRound = rNum;-->
+<!--         updateUI();-->
+<!--     }-->
+
+<!--     function updateUI() {-->
+<!--         recalculateAllScores();-->
+
+<!--         document.getElementById('current-round-indicator').innerText = `Viewing Round ${viewingRound}`;-->
+<!--         document.getElementById('pairings-header-title').innerText = `Round ${viewingRound} Pairings (White vs Black)`;-->
+
+<!--         const tabsContainer = document.getElementById('round-tabs-container');-->
+<!--         tabsContainer.innerHTML = '';-->
+<!--         roundsHistory.forEach(r => {-->
+<!--             const activeClass = r.round === viewingRound ? 'bg-emerald-950 text-emerald-400 border-emerald-800' : 'text-slate-400 hover:text-white';-->
+<!--             tabsContainer.innerHTML += `<button onclick="setViewingRound(${r.round})" class="px-2.5 py-1 rounded border border-transparent ${activeClass}">R${r.round}</button>`;-->
+<!--         });-->
+
+<!--         const matchesContainer = document.getElementById('matches-container');-->
+<!--         matchesContainer.innerHTML = '';-->
+<!--         const targetRoundObj = roundsHistory.find(r => r.round === viewingRound);-->
+
+<!--         if (targetRoundObj) {-->
+<!--             targetRoundObj.matches.forEach((m, idx) => {-->
+<!--                 if (!m.player2) {-->
+<!--                     matchesContainer.innerHTML += `-->
+<!--                         <div class="bg-slate-950 p-3 rounded border border-slate-800 text-xs flex justify-between items-center">-->
+<!--                             <div><span class="text-slate-500 mr-2 font-mono">Board ${idx + 1}</span><span class="font-semibold text-white">${m.player1.name}</span> <span class="text-emerald-400">(White)</span> vs <span class="text-slate-500 italic">BYE</span></div>-->
+<!--                             <div class="font-mono text-emerald-400">1-0</div>-->
+<!--                         </div>-->
+<!--                     `;-->
+<!--                     return;-->
+<!--                 }-->
+
+<!--                 const activeWhiteWins = m.winPlayer1 === true ? 'bg-emerald-950/80 border-emerald-800 text-emerald-300' : 'bg-slate-900 border-slate-800 text-slate-400';-->
+<!--                 const activeDraw = m.winPlayer1 === 'draw' ? 'bg-blue-950/80 border-blue-800 text-blue-300' : 'bg-slate-900 border-slate-800 text-slate-400';-->
+<!--                 const activeBlackWins = m.winPlayer1 === false ? 'bg-emerald-950/80 border-emerald-800 text-emerald-300' : 'bg-slate-900 border-slate-800 text-slate-400';-->
+
+<!--                 matchesContainer.innerHTML += `-->
+<!--                     <div class="bg-slate-950 p-3 rounded border border-slate-800 text-xs flex flex-col sm:flex-row justify-between items-center gap-2">-->
+<!--                         <div>-->
+<!--                             <span class="text-slate-500 mr-2 font-mono">B${idx + 1}</span>-->
+<!--                             <span class="font-semibold text-white">${m.player1.name}</span> <span class="text-[10px] text-emerald-400 uppercase font-bold">(White)</span>-->
+<!--                             <span class="text-slate-600 mx-1">vs</span>-->
+<!--                             <span class="font-semibold text-slate-300">${m.player2.name}</span> <span class="text-[10px] text-slate-500 uppercase">(Black)</span>-->
+<!--                         </div>-->
+<!--                         <div class="flex items-center gap-1 font-mono">-->
+<!--                             <button onclick="setMatchResult(${viewingRound}, ${idx}, true)" class="px-2.5 py-1 rounded border transition ${activeWhiteWins}">1-0</button>-->
+<!--                             <button onclick="setMatchResult(${viewingRound}, ${idx}, 'draw')" class="px-2.5 py-1 rounded border transition ${activeDraw}">½-½</button>-->
+<!--                             <button onclick="setMatchResult(${viewingRound}, ${idx}, false)" class="px-2.5 py-1 rounded border transition ${activeBlackWins}">0-1</button>-->
+<!--                         </div>-->
+<!--                     </div>-->
+<!--                 `;-->
+<!--             });-->
+<!--         }-->
+
+<!--         const standingsBody = document.getElementById('standings-body');-->
+<!--         standingsBody.innerHTML = '';-->
+<!--         const sorted = getSortedStandings();-->
+
+<!--         sorted.forEach((p, idx) => {-->
+<!--             standingsBody.innerHTML += `-->
+<!--                 <tr class="hover:bg-slate-800/45 transition">-->
+<!--                     <td class="py-2 px-2 text-slate-500">${idx + 1}</td>-->
+<!--                     <td class="py-2 px-2 font-semibold text-emerald-400 hover:underline cursor-pointer" onclick="openPlayerModal('${p.name}')">${p.name}</td>-->
+<!--                     <td class="py-2 px-2 text-center font-bold text-white">${p.score}</td>-->
+<!--                     <td class="py-2 px-2 text-center text-slate-400">${calculateBuchholz(p).toFixed(1)}</td>-->
+<!--                     <td class="py-2 px-2 text-center text-slate-400">${calculateSonnebornBerger(p).toFixed(1)}</td>-->
+<!--                     <td class="py-2 px-2 text-center text-slate-400">${calculateAverageRating(p)}</td>-->
+<!--                     <td class="py-2 px-2 text-right text-slate-400">${p.rating}</td>-->
+<!--                 </tr>-->
+<!--             `;-->
+<!--         });-->
+<!--     }-->
+
+<!--     function openPlayerModal(playerName) {-->
+<!--         const player = players.find(p => p.name === playerName);-->
+<!--         if (!player) return;-->
+
+<!--         document.getElementById('modal-player-rank').innerText = `ID: ${player.id !== null ? player.id : 'Pending (Backend)'}`;-->
+<!--         document.getElementById('modal-player-name').innerText = player.name;-->
+<!--         document.getElementById('modal-player-rating').innerText = player.rating;-->
+<!--         document.getElementById('modal-player-score').innerText = player.score;-->
+
+<!--         if (player.id !== null) {-->
+<!--             fetchPlayerByIdAPI(player.id);-->
+<!--         } else {-->
+<!--             document.getElementById('modal-endpoint-data').innerText = "Player ID is null (not yet assigned/persisted by backend).";-->
+<!--         }-->
+
+<!--         const historyContainer = document.getElementById('modal-match-history');-->
+<!--         historyContainer.innerHTML = '';-->
+
+<!--         let hasMatches = false;-->
+<!--         roundsHistory.forEach(r => {-->
+<!--             r.matches.forEach(m => {-->
+<!--                 const isPlayer1 = m.player1 && m.player1.name === player.name;-->
+<!--                 const isPlayer2 = m.player2 && m.player2.name === player.name;-->
+
+<!--                 if (isPlayer1 || isPlayer2) {-->
+<!--                     hasMatches = true;-->
+<!--                     let oppName = m.player2 ? (isPlayer1 ? m.player2.name : m.player1.name) : "BYE";-->
+
+<!--                     historyContainer.innerHTML += `-->
+<!--                         <div class="bg-slate-950 p-2.5 rounded border border-slate-800 flex justify-between items-center cursor-pointer hover:border-emerald-700" onclick="fetchPlayerMatchDataAPI(${player.id}, ${m.id})">-->
+<!--                             <div><span class="text-slate-500">R${r.round}</span> vs <strong class="text-slate-200">${oppName}</strong></div>-->
+<!--                             <span class="text-xs text-emerald-400 font-mono underline">Test Player/Match API</span>-->
+<!--                         </div>-->
+<!--                     `;-->
+<!--                 }-->
+<!--             });-->
+<!--         });-->
+
+<!--         if (!hasMatches) historyContainer.innerHTML = `<div class="text-slate-500 italic">No matches played yet.</div>`;-->
+<!--         document.getElementById('player-modal').classList.remove('hidden');-->
+<!--     }-->
+
+<!--     function closePlayerModal() {-->
+<!--         document.getElementById('player-modal').classList.add('hidden');-->
+<!--     }-->
+
+<!--     function showWinners() {-->
+<!--         const section = document.getElementById('winners-section');-->
+<!--         const list = document.getElementById('podium-list');-->
+<!--         section.classList.remove('hidden');-->
+<!--         list.innerHTML = '';-->
+
+<!--         const sorted = getSortedStandings();-->
+<!--         sorted.forEach((p, idx) => {-->
+<!--             list.innerHTML += `-->
+<!--                 <div class="bg-slate-950 p-3 rounded border border-slate-800 flex justify-between items-center">-->
+<!--                     <div>#${idx + 1} ${p.name} (${p.score} pts)</div>-->
+<!--                     <div class="text-slate-400 text-[11px]">BH: ${calculateBuchholz(p).toFixed(1)} | SB: ${calculateSonnebornBerger(p).toFixed(1)}</div>-->
+<!--                 </div>-->
+<!--             `;-->
+<!--         });-->
+<!--     }-->
+
+<!--     function resetTournament() {-->
+<!--         location.reload();-->
+<!--     }-->
+<!--</script>-->
+</body>
+</html>
